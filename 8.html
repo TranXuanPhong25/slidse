@@ -1,366 +1,487 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hiệu Năng Chess Engine</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;          
 
-        }
-        .slide {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            color: white;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;justify-content: center;
-        }
-        .header {
-            padding: 40px 60px 20px;
-            position: relative;
-            z-index: 2;
-        }
-        .title {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: white;
-            position: relative;
-            display: inline-block;
-        }
-        .title::after {
-            content: "";
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background-color: #60a5fa;
-        }
-        .content {
-         width:80vw;
-            padding: 0 60px 40px;
-            position: relative;
-            z-index: 2;
-            display: flex;
-        }
-        .left-column {
-            flex: 1;
-            padding-right: 30px;
-        }
-        .right-column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .performance-box {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
-            backdrop-filter: blur(5px);
-            border-left: 4px solid #60a5fa;
-        }
-        .performance-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #93c5fd;
-            display: flex;
-            align-items: center;
-        }
-        .performance-icon {
-            margin-right: 12px;
-            color: #93c5fd;
-            font-size: 28px;
-        }
-        .chart-container {
-            height: 300px;
-            width: 100%;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            backdrop-filter: blur(5px);
-            margin-bottom: 25px;
-        }
-        .result-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .result-box {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            border-left: 4px solid #60a5fa;
-            position: relative;
-            overflow: hidden;
-        }
-        .result-icon {
-            font-size: 32px;
-            margin-right: 20px;
-            color: #93c5fd;
-        }
-        .result-content {
-            flex-grow: 1;
-        }
-        .result-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #93c5fd;
-        }
-        .result-description {
-            font-size: 16px;
-            line-height: 1.4;
-        }
-        .highlight {
-            color: #4ade80;
-            font-weight: 600;
-        }
-        .insight-box {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            backdrop-filter: blur(5px);
-            margin-top: 20px;
-        }
-        .insight-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #93c5fd;
-            display: flex;
-            align-items: center;
-        }
-        .insight-icon {
-            margin-right: 10px;
-            color: #93c5fd;
-        }
-        .insight-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .insight-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-        .insight-bullet {
-            margin-right: 10px;
-            color: #60a5fa;
-        }
-        .chess-pieces {
-            position: absolute;
-            bottom: -100px;
-            right: -100px;
-            opacity: 0.05;
-            font-size: 500px;
-            transform: rotate(-15deg);
-            z-index: 1;
-        }
-        .bottom-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 8px;
-            width: 100%;
-            background: #60a5fa;
-        }
-        .badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(79, 70, 229, 0.6);
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 5px 10px;
-            border-radius: 20px;
-        }
-        .trophy {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            font-size: 28px;
-            color: #fbbf24;
-            opacity: 0.8;
-        }
-    </style>
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Thuật Toán Tìm Kiếm Nâng Cao</title>
+   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
+
+   <style>
+      body {
+         font-family: 'Montserrat', sans-serif;
+         margin: 0;
+         padding: 0;
+         overflow: hidden;
+         width: 100vw;
+         height: 100vh;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+
+      }
+
+      .slide {
+         width: 100%;
+         height: 100%;
+         background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+         color: white;
+         position: relative;
+         overflow: hidden;
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+      }
+
+      .header {
+         padding: 40px 60px 20px;
+         position: relative;
+         z-index: 2;
+      }
+
+      .title {
+         font-size: 48px;
+         font-weight: 700;
+         margin-bottom: 10px;
+         color: white;
+         position: relative;
+         display: inline-block;
+      }
+
+      .title-underline {
+         width: 100px;
+         height: 4px;
+         background: linear-gradient(90deg, #4299e1, #90cdf4);
+         margin: 10px 0 20px 0;
+      }
+
+      .feature-card {
+         background: rgba(45, 55, 72, 0.7);
+         border-radius: 8px;
+         border-left: 4px solid #4299e1;
+         transition: all 0.3s ease;
+      }
+
+      .feature-card:hover {
+         transform: translateY(-5px);
+         box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .tt-card {
+         border-left-color: #4299e1;
+      }
+
+      .mo-card {
+         border-left-color: #38b2ac;
+      }
+
+      .title::after {
+         content: "";
+         position: absolute;
+         bottom: -5px;
+         left: 0;
+         width: 100%;
+         height: 3px;
+         background-color: #60a5fa;
+      }
+
+      .content {
+         padding: 0 60px 40px;
+         position: relative;
+         z-index: 2;
+      }
+
+      .algorithms-grid {
+         display: grid;
+         grid-template-columns: repeat(3, 1fr);
+         grid-gap: 25px;
+      }
+
+      .opt-card {
+         border-left-color: #f6ad55;
+      }
+
+      .code-snippet {
+         font-family: 'JetBrains Mono', monospace;
+         font-size: 0.8rem;
+         background-color: #2d3748;
+         border-radius: 4px;
+         padding: 8px;
+         color: #a0aec0;
+      }
+
+      .tt-color {
+         color: #4299e1;
+      }
+
+      .mo-color {
+         color: #38b2ac;
+      }
+
+      .opt-color {
+         color: #f6ad55;
+      }
+
+      .hash-table {
+         display: grid;
+         grid-template-columns: repeat(4, 1fr);
+         gap: 2px;
+         border-radius: 4px;
+         overflow: hidden;
+         border: 1px solid rgba(66, 153, 225, 0.3);
+      }
+
+      .hash-cell {
+         padding: 5px;
+         font-size: 0.75rem;
+         text-align: center;
+         background-color: rgba(45, 55, 72, 0.7);
+      }
+
+      .hash-header {
+         font-weight: bold;
+         background-color: rgba(66, 153, 225, 0.3);
+      }
+
+      .hash-entry {
+         border-bottom: 1px solid rgba(66, 153, 225, 0.1);
+      }
+
+      .hash-conflict {
+         background-color: rgba(245, 101, 101, 0.2);
+      }
+
+      .bg-pattern {
+         position: absolute;
+         right: 0;
+         top: 0;
+         width: 400px;
+         height: 400px;
+         opacity: 0.05;
+         z-index: 0;
+      }
+
+      .chart-container {
+         width: 100%;
+         height: 180px;
+      }
+
+      .benefit-badge {
+         background-color: rgba(56, 178, 172, 0.2);
+         color: #38b2ac;
+         font-size: 0.7rem;
+         border-radius: 9999px;
+         padding: 2px 8px;
+      }
+
+      .algorithm-card {
+         background-color: rgba(255, 255, 255, 0.1);
+         border-radius: 12px;
+         padding: 20px;
+         display: flex;
+         flex-direction: column;
+         backdrop-filter: blur(5px);
+         position: relative;
+         overflow: hidden;
+         border-top: 4px solid #60a5fa;
+         height: 500px;
+      }
+
+      .algorithm-header {
+         display: flex;
+         align-items: center;
+         margin-bottom: 15px;
+      }
+
+      .algorithm-icon {
+         font-size: 28px;
+         color: #93c5fd;
+         margin-right: 15px;
+      }
+
+      .algorithm-title {
+         font-size: 22px;
+         font-weight: 600;
+         color: #93c5fd;
+      }
+
+      .algorithm-description {
+         font-size: 19px;
+         line-height: 1.5;
+         margin-bottom: 20px;
+         flex-grow: 0;
+      }
+
+      .key-point {
+         display: flex;
+         align-items: flex-start;
+         margin-bottom: 10px;
+      }
+
+      .key-point-icon {
+         margin-right: 10px;
+         color: #60a5fa;
+         font-size: 16px;
+         margin-top: 2px;
+      }
+
+      .key-point-text {
+         font-size: 19px;
+         line-height: 1.4;
+      }
+
+
+      .highlight {
+         color: #93c5fd;
+         font-weight: 600;
+      }
+
+      .chess-pieces {
+         position: absolute;
+         bottom: -100px;
+         right: -100px;
+         opacity: 0.05;
+         font-size: 500px;
+         transform: rotate(-15deg);
+         z-index: 1;
+      }
+
+      .bottom-line {
+         position: absolute;
+         bottom: 0;
+         left: 0;
+         height: 8px;
+         width: 100%;
+         background: #60a5fa;
+      }
+
+
+
+      .code {
+         font-family: monospace;
+         background-color: rgba(255, 255, 255, 0.1);
+         padding: 2px 5px;
+         border-radius: 3px;
+         font-size: 13px;
+      }
+   </style>
 </head>
+
 <body>
-    <div class="slide">
-        <div class="header">
-            <h1 class="title">HIỆU NĂNG CHESS ENGINE</h1>
-        </div>
-        
-        <div class="content">
-            <div class="left-column">
-                <div class="performance-box">
-                    <div class="performance-title">
-                        <i class="fas fa-chart-line performance-icon"></i>
-                        Thông Số Trận Đấu
-                    </div>
-                    <p style="margin-bottom: 15px; font-size: 18px;">
-                        Thiết lập tiêu chuẩn cho thử nghiệm:
-                    </p>
-                    <ul style="padding-left: 20px; line-height: 1.6; font-size: 16px;">
-                        <li><b>Độ sâu:</b> 14 (cho so sánh cơ bản)</li>
-                        <li><b>Thời gian:</b> 1.5 giây cho mỗi nước đi</li>
-                        <li><b>Thách đấu cao cấp:</b> Độ sâu 29, 8 giây/nước</li>
-                    </ul>
-                </div>
-                
-               
-                <div class="insight-box">
-                    <div class="insight-title">
-                        <i class="fas fa-lightbulb insight-icon"></i>
-                        Đánh Giá Hiệu Năng
-                    </div>
-                    <ul class="insight-list">
-   
-                        <li class="insight-item">
-                            <i class="fas fa-angle-right insight-bullet"></i>
-                            <div>Tận dụng hiệu quả <span class="highlight">pruning techniques</span> giúp giảm đáng kể số node cần xét</div>
+   <div class="slide">
+      <div class="header">
+         <h1 class="title">THUẬT TOÁN TÌM KIẾM NÂNG CAO</h1>
+      </div>
+      <!-- Main Content -->
+      <div class="relative z-10">
+         <h1 class="text-4xl font-bold text-blue-300 mb-2">Transposition Table & Các Kỹ Thuật Tối Ưu</h1>
+         <div class="title-underline"></div>
+
+         <div class="grid grid-cols-2 gap-6 mb-6">
+            <!-- Transposition Table -->
+            <div class="feature-card tt-card p-4">
+               <h3 class="text-xl font-semibold tt-color mb-3 flex items-center">
+                  <i class="fas fa-database mr-2"></i>
+                  Transposition Table
+               </h3>
+
+               <div class="grid grid-cols-3 gap-4 mb-4">
+                  <div class="col-span-2">
+                     <p class="text-sm text-gray-300 mb-2">Bảng hash lưu trữ vị trí đã đánh giá để tái sử dụng:</p>
+                     <ul class="text-xs space-y-1">
+                        <li class="flex items-start">
+                           <i class="fas fa-check-circle tt-color mt-1 mr-2"></i>
+                           <span>Tránh tính toán lại các vị trí đã gặp</span>
                         </li>
-                        <li class="insight-item">
-                            <i class="fas fa-angle-right insight-bullet"></i>
-                            <div>Hiệu suất cao hơn đáng kể ở <span class="highlight">tàn cuộc</span> nhờ đánh giá vị trí vua tốt</div>
+                        <li class="flex items-start">
+                           <i class="fas fa-check-circle tt-color mt-1 mr-2"></i>
+                           <span>Lưu trữ nước đi tốt nhất cho move ordering</span>
                         </li>
-                    </ul>
-                </div>
+                        <li class="flex items-start">
+                           <i class="fas fa-check-circle tt-color mt-1 mr-2"></i>
+                           <span>Xử lý transpositions (thứ tự nước khác → cùng vị trí)</span>
+                        </li>
+                     </ul>
+                  </div>
+
+                  <div class="bg-gray-800 bg-opacity-70 p-2 rounded">
+                     <h4 class="text-sm font-semibold mb-1 text-center tt-color">Lợi ích</h4>
+                     <div class="flex flex-col items-center justify-center h-full text-xs">
+                        <div class="mb-1 text-center">
+                           <span class="benefit-badge">+1-3 ply</span>
+                        </div>
+                        <div class="mb-1 text-center">
+                           <span class="benefit-badge">~40% nodes</span>
+                        </div>
+                        <div class="text-center">
+                           <span class="benefit-badge">~100-150 Elo</span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               <div class="mb-3">
+                  <h4 class="text-sm font-semibold mb-2">Cấu trúc Entry</h4>
+                  <div class="hash-table">
+                     <div class="hash-cell hash-header">Khóa Zobrist</div>
+                     <div class="hash-cell hash-header">Loại (EXACT/LOWER/UPPER)</div>
+                     <div class="hash-cell hash-header">Điểm</div>
+                     <div class="hash-cell hash-header">Nước đi tốt nhất</div>
+
+                     <div class="hash-cell hash-entry">0xA762F4C1...</div>
+                     <div class="hash-cell hash-entry">EXACT</div>
+                     <div class="hash-cell hash-entry">+156</div>
+                     <div class="hash-cell hash-entry">e2e4</div>
+
+                     <div class="hash-cell hash-entry">0xB810E25D...</div>
+                     <div class="hash-cell hash-entry">LOWER</div>
+                     <div class="hash-cell hash-entry">+432</div>
+                     <div class="hash-cell hash-entry">g1f3</div>
+
+                     <div class="hash-cell hash-entry hash-conflict">0xC13A78F2...</div>
+                     <div class="hash-cell hash-entry hash-conflict">UPPER</div>
+                     <div class="hash-cell hash-entry hash-conflict">-75</div>
+                     <div class="hash-cell hash-entry hash-conflict">d7d5</div>
+                  </div>
+               </div>
+
+               <div class="code-snippet text-xs">
+                  <span class="text-green-400">// Tìm kiếm trong TT</span><br>
+                  TTEntry* entry = TT.probe(pos.key());<br>
+                  if (entry && entry->depth >= depth) {<br>
+                  &nbsp;&nbsp;if (entry->type == EXACT)<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;return entry->score;<br>
+                  &nbsp;&nbsp;if (entry->type == LOWER && entry->score >= beta)<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;return entry->score;<br>
+                  &nbsp;&nbsp;if (entry->type == UPPER && entry->score <= alpha)<br>
+                     &nbsp;&nbsp;&nbsp;&nbsp;return entry->score;<br>
+                     }
+               </div>
             </div>
-            
-            <div class="right-column">
-                <div class="result-container">
-                    <div class="result-box">
-                        <div class="result-icon">
-                            <i class="fas fa-chess"></i>
+
+            <!-- Move Ordering -->
+            <div class="feature-card mo-card p-4">
+               <h3 class="text-xl font-semibold mo-color mb-3 flex items-center">
+                  <i class="fas fa-sort-amount-down mr-2"></i>
+                  Move Ordering
+               </h3>
+
+               <div class="grid grid-cols-3 gap-4 mb-4">
+                  <div class="col-span-2">
+                     <p class="text-sm text-gray-300 mb-2">Sắp xếp nước đi để tối ưu cắt tỉa alpha-beta:</p>
+                     <ul class="text-xs space-y-1">
+                        <li class="flex items-start">
+                           <i class="fas fa-check-circle mo-color mt-1 mr-2"></i>
+                           <span>Sắp xếp theo khả năng cắt tỉa</span>
+                        </li>
+                        <li class="flex items-start">
+                           <i class="fas fa-check-circle mo-color mt-1 mr-2"></i>
+                           <span>Tăng hiệu quả pruning gấp nhiều lần</span>
+                        </li>
+                        <li class="flex items-start">
+                           <i class="fas fa-check-circle mo-color mt-1 mr-2"></i>
+                           <span>Giảm drastically số nodes cần duyệt</span>
+                        </li>
+                     </ul>
+                  </div>
+
+                  <div class="bg-gray-800 bg-opacity-70 p-2 rounded">
+                     <h4 class="text-sm font-semibold mb-1 text-center mo-color">Lợi ích</h4>
+                     <div class="flex flex-col items-center justify-center h-full text-xs">
+                        <div class="mb-1 text-center">
+                           <span class="benefit-badge">+2-3 ply</span>
                         </div>
-                        <div class="result-content">
-                            <div class="result-title">So sánh với Pigeon 1.5.1</div>
-                            <div class="result-description">
-                                Engine của chúng tôi vượt trội hơn <span class="highlight">~20 Elo</span><br>
-                                (Pigeon có xếp hạng 1800 Elo trên CCRL)
-                            </div>
+                        <div class="mb-1 text-center">
+                           <span class="benefit-badge">~80% nodes</span>
                         </div>
-                        <div class="badge">Thắng</div>
-                        <div class="trophy"><i class="fas fa-trophy"></i></div>
-                    </div>
-                    
-                    <div class="result-box">
-                        <div class="result-icon">
-                            <i class="fas fa-fish"></i>
+                        <div class="text-center">
+                           <span class="benefit-badge">~200+ Elo</span>
                         </div>
-                        <div class="result-content">
-                            <div class="result-title">So sánh với Stockfish (giới hạn 2500 Elo)</div>
-                            <div class="result-description">
-                                Engine của chúng tôi vượt trội hơn <span class="highlight">~11 Elo</span><br>
-                                Ổn định hơn trong các ván đấu dài
-                            </div>
-                        </div>
-                        <div class="badge">Thắng nhỏ</div>
-                        <div class="trophy"><i class="fas fa-trophy"></i></div>
-                    </div>
-                    
-                    <div class="result-box">
-                        <div class="result-icon">
-                            <i class="fas fa-dragon"></i>
-                        </div>
-                        <div class="result-content">
-                            <div class="result-title">Đấu với Komodo Maximum (chess.com)</div>
-                            <div class="result-description">
-                                <span class="highlight">Chiến thắng</span> ở độ sâu 29<br>
-                                Giới hạn 8 giây cho mỗi nước đi
-                            </div>
-                        </div>
-                        <div class="badge">Thành tích tốt</div>
-                        <div class="trophy"><i class="fas fa-medal"></i></div>
-                    </div>
-                    
-                    <div class="result-box">
-                        <div class="result-icon">
-                            <i class="fas fa-microchip"></i>
-                        </div>
-                        <div class="result-content">
-                            <div class="result-title">Hiệu suất tính toán</div>
-                            <div class="result-description">
-                                Xử lý trung bình <span class="highlight">0.8-1.5 triệu node/giây</span><br>
-                                Tỉ lệ cache hit transposition table: 10-20%
-                            </div>
-                        </div>
-                        <div class="badge">Hiệu quả</div>
-                    </div>
-                </div>
+                     </div>
+                  </div>
+               </div>
+
+               <div class="mb-4">
+                  <h4 class="text-sm font-semibold mb-1">Thứ tự ưu tiên</h4>
+                  <div class="mermaid mb-2 py-2">
+                        flowchart LR
+                        A[TT Move] --> B[Captures]
+                        B --> C[Killers]
+                        C --> E[History]
+                     
+                        style A fill:#4299e1,color:#fff
+                        style B fill:#f56565,color:#fff
+                        style C fill:#ed8936,color:#fff
+                        style E fill:#9f7aea,color:#fff
+                        linkStyle 1,2,0 stroke:#fff,stroke-width:4px,color:red;
+
+                  </div>
+               </div>
+
+               <div class="grid grid-cols-3 gap-2">
+                  <div class="bg-gray-800 bg-opacity-60 p-2 rounded">
+                     <h5 class="text-xs font-semibold mo-color">Killer Moves</h5>
+                     <p class="text-xs">Nước không bắt quân từng gây cắt tỉa beta ở cùng độ sâu.</p>
+                  </div>
+
+                  <div class="bg-gray-800 bg-opacity-60 p-2 rounded">
+                     <h5 class="text-xs font-semibold mo-color">History Heuristic</h5>
+                     <p class="text-xs">Thống kê các nước thường gây cắt tỉa beta.</p>
+                  </div>
+
+                  <div class="bg-gray-800 bg-opacity-60 p-2 rounded">
+                     <h5 class="text-xs font-semibold mo-color">SEE (Static Exchange Eval)</h5>
+                     <p class="text-xs">Đánh giá trao đổi quân tĩnh để sắp xếp nước bắt.</p>
+                  </div>
+               </div>
             </div>
-        </div>
-        
-        <div class="chess-pieces">
-            <i class="fas fa-chess-king"></i>
-        </div>
-        
-        <div class="bottom-line"></div>
-    </div>
-    
-    <script>
-       
-        document.addEventListener('keydown', function(event) {
-          // Detect arrow key presses
-          switch(event.key) {
-              case 'ArrowLeft':
+         </div>
+
+      </div>
+
+      <script>
+ 
+         
+         document.addEventListener('keydown', function (event) {
+            // Detect arrow key presses
+            switch (event.key) {
+               case 'ArrowLeft':
                   // Navigate to previous slide
                   navigateToSlide(getPreviousSlideNumber());
                   break;
-              case 'ArrowRight':
+               case 'ArrowRight':
                   // Navigate to next slide
                   navigateToSlide(getNextSlideNumber());
                   break;
-          }
-      });
+            }
+         });
 
-      function getCurrentSlideNumber() {
-          // Extract slide number from current URL
-          const path = window.location.pathname;
-          const match = path.match(/(\d+)\.html$/);
-          return match ? parseInt(match[1]) : 9; // Default to current slide if no match
-      }
+         function getCurrentSlideNumber() {
+            // Extract slide number from current URL
+            const path = window.location.pathname;
+            const match = path.match(/(\d+)\.html$/);
+            return match ? parseInt(match[1]) : 9; // Default to current slide if no match
+         }
 
-      function getPreviousSlideNumber() {
-          const current = getCurrentSlideNumber();
-          return Math.max(1, current - 1); // Prevent going below slide 1
-      }
+         function getPreviousSlideNumber() {
+            const current = getCurrentSlideNumber();
+            return Math.max(1, current - 1); // Prevent going below slide 1
+         }
 
-      function getNextSlideNumber() {
-          const current = getCurrentSlideNumber();
-          // You may want to set an upper limit based on your total slides
-          return current + 1;
-      }
+         function getNextSlideNumber() {
+            const current = getCurrentSlideNumber();
+            // You may want to set an upper limit based on your total slides
+            return current + 1;
+         }
 
-      function navigateToSlide(slideNumber) {
-          window.location.href = `${slideNumber}.html`;
-      }
-    </script>
+         function navigateToSlide(slideNumber) {
+            window.location.href = `${slideNumber}.html`;
+         }
+      </script>
 </body>
+
 </html>
