@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thuật Toán Tìm Kiếm - Negamax</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .slide {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;justify-content: center;
+        }
+        .header {
+            padding: 40px 60px 20px;
+            position: relative;
+            z-index: 2;
+        }
+        .title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: white;
+            position: relative;
+            display: inline-block;
+        }
+        .title::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #60a5fa;
+        }
+        .content {
+         width:90vw;
+            padding: 0 60px 40px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+        }
+        .left-column {
+            flex: 1;
+            padding-right: 30px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #93c5fd;
+        }
+        .algorithm-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+            border-left: 4px solid #60a5fa;
+        }
+        .algorithm-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .algorithm-icon {
+            margin-right: 12px;
+            color: #93c5fd;
+            font-size: 22px;
+        }
+        .algorithm-text {
+            font-size: 19px;
+            line-height: 1.4;
+        }
+        .pruning-techniques {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .technique-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            backdrop-filter: blur(5px);
+            border-left: 3px solid #60a5fa;
+        }
+        .technique-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .technique-icon {
+            margin-right: 10px;
+            color: #93c5fd;
+            font-size: 18px;
+        }
+        .technique-text {
+            font-size: 19px;
+            line-height: 1.3;
+        }
+      
+        .chess-pieces {
+            position: absolute;
+            bottom: -100px;
+            right: -100px;
+            opacity: 0.05;
+            font-size: 500px;
+            transform: rotate(-15deg);
+            z-index: 1;
+        }
+        .bottom-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            width: 100%;
+            background: #60a5fa;
+        }
+      
+        .params {
+            font-family: monospace;
+            color: #bfdbfe;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <h1 class="title">THUẬT TOÁN TÌM KIẾM - NEGAMAX</h1>
+        </div>
+        
+        <div class="content">
+            <div class="left-column">
+                <div class="algorithm-box">
+                    <div class="algorithm-title">
+                        <i class="fas fa-code-branch algorithm-icon"></i>
+                        Negamax
+                    </div>
+                    <div class="algorithm-text">
+                        Biến thể của minimax sử dụng nguyên tắc max(a, b) = -min(-a, -b).<br>
+                    </div>
+                </div>
+                
+               
+                <div class="algorithm-box">
+                    <div class="algorithm-title">
+                        <i class="fas fa-search-minus algorithm-icon"></i>
+                        Quiescence Search
+                    </div>
+                    <div class="algorithm-text">
+                        Giải quyết vấn đề "horizon effect" bằng cách tìm kiếm đến các vị trí "quiet".<br>
+                        Chỉ xét các nước bắt quân để tránh đánh giá khi đang trong tình trạng nước bắt chưa kết thúc.
+                    </div>
+                </div>
+                <div class="algorithm-box">
+                  <div class="algorithm-title">
+                      <i class="fas fa-layer-group algorithm-icon"></i>
+                      Iterative Deepening & Aspiration Windows
+                  </div>
+                  <div class="algorithm-text">
+                      <b>Iterative Deepening:</b> Tìm kiếm từ độ sâu 1 đến tối đa, đảm bảo tìm thấy nước đi tốt ngay cả khi bị gián đoạn.<br>
+                      <b>Aspiration Windows:</b> Sử dụng cửa sổ alpha-beta hẹp hơn để tối ưu tìm kiếm.
+                      <span class="params">Tune:ASPIRATION_DELTA</span>
+                  </div>
+              </div>
+            </div>
+            
+            <div class="right-column">
+                <div class="section">
+                    <h2 class="section-title">Các Kỹ Thuật Cắt Tỉa (Pruning)</h2>
+                    <div class="pruning-techniques">
+                        <div class="technique-box">
+                            <div class="technique-title">
+                                <i class="fas fa-cut technique-icon"></i>
+                                Alpha-Beta Pruning
+                            </div>
+                            <div class="technique-text">
+                                Bỏ qua các nhánh không cần thiết khi đã có nhánh tốt hơn.
+                            </div>
+                        </div>
+                        
+                        <div class="technique-box">
+                            <div class="technique-title">
+                                <i class="fas fa-forward technique-icon"></i>
+                                Null Move Pruning
+                            </div>
+                            <div class="technique-text">
+                                Cho đối phương đi thêm nước miễn phí, nếu vẫn tốt thì cắt tỉa.
+                                <br><span class="params">Tune:NMP_BASE, NMP_DIVISION, NMP_MARGIN</span>
+                            </div>
+                        </div>
+                        
+                        <div class="technique-box">
+                            <div class="technique-title">
+                                <i class="fas fa-fast-forward technique-icon"></i>
+                                Reverse Futility Pruning
+                            </div>
+                            <div class="technique-text">
+                                Bỏ qua nhánh nếu đánh giá tĩnh cao hơn beta nhiều.
+                                <br><span class="params">Tune:RFP_MARGIN, RFP_DEPTH, RFP_IMPROVING_BONUS</span>
+                            </div>
+                        </div>
+                        
+                        <div class="technique-box">
+                            <div class="technique-title">
+                                <i class="fas fa-compress-arrows-alt technique-icon"></i>
+                                Late Move Reduction
+                            </div>
+                            <div class="technique-text">
+                                Tìm kiếm các nước đi sau với độ sâu thấp hơn.
+                                <br><span class="params">Tune:LMR_BASE, LMR_DIVISION</span>
+                            </div>
+                        </div>
+                        
+                        <div class="technique-box">
+                            <div class="technique-title">
+                                <i class="fas fa-ban technique-icon"></i>
+                                Futility Pruning
+                            </div>
+                            <div class="technique-text">
+                                Bỏ qua nước yên tĩnh ở độ sâu thấp nếu đánh giá + margin vẫn dưới alpha.
+                                <br><span class="params">Tune:FUTILITY_MARGIN, FUTILITY_DEPTH</span>
+                            </div>
+                        </div>
+                        
+                        <div class="technique-box">
+                            <div class="technique-title">
+                                <i class="fas fa-trash-alt technique-icon"></i>
+                                Late Move Pruning
+                            </div>
+                            <div class="technique-text">
+                                Bỏ qua các nước yên tĩnh sau khi đã xem xét nhiều nước.
+                                <br><span class="params">Tune:LMP_DEPTH_THRESHOLD, lmpTable[][]</span>
+                            </div>
+                        </div>
+                        
+                        <div class="technique-box">
+                            <div class="technique-title">
+                                <i class="fas fa-exchange-alt technique-icon"></i>
+                                SEE Pruning
+                            </div>
+                            <div class="technique-text">
+                                Bỏ qua nước nếu tính toán trao đổi tĩnh cho thấy sẽ thua material.
+                                <br><span class="params">Tune:SEE_QUIET_MARGIN_BASE, SEE_NOISY_MARGIN_BASE</span>
+                            </div>
+                        </div>
+                        
+                        <div class="technique-box">
+                            <div class="technique-title">
+                                <i class="fas fa-history technique-icon"></i>
+                                History Pruning
+                            </div>
+                            <div class="technique-text">
+                                Bỏ qua nước có lịch sử không tốt.
+                                <br><span class="params">Tune:HISTORY_PRUNING_THRESHOLD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+              
+            </div>
+        </div>
+        
+        <div class="chess-pieces">
+            <i class="fas fa-chess-knight"></i>
+        </div>
+        
+        <div class="bottom-line"></div>
+    </div>
+    
+    <script>
+      
+        document.addEventListener('keydown', function(event) {
+          // Detect arrow key presses
+          switch(event.key) {
+              case 'ArrowLeft':
+                  // Navigate to previous slide
+                  navigateToSlide(getPreviousSlideNumber());
+                  break;
+              case 'ArrowRight':
+                  // Navigate to next slide
+                  navigateToSlide(getNextSlideNumber());
+                  break;
+          }
+      });
+
+      function getCurrentSlideNumber() {
+          // Extract slide number from current URL
+          const path = window.location.pathname;
+          const match = path.match(/(\d+)\.html$/);
+          return match ? parseInt(match[1]) : 9; // Default to current slide if no match
+      }
+
+      function getPreviousSlideNumber() {
+          const current = getCurrentSlideNumber();
+          return Math.max(1, current - 1); // Prevent going below slide 1
+      }
+
+      function getNextSlideNumber() {
+          const current = getCurrentSlideNumber();
+          // You may want to set an upper limit based on your total slides
+          return current + 1;
+      }
+
+      function navigateToSlide(slideNumber) {
+          window.location.href = `${slideNumber}.html`;
+      }
+    </script>
+</body>
+</html>

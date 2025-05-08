@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cấu Trúc Cơ Bản Chess Engine</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
+    <style>
+         body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;        
+
+        }
+        .slide {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;justify-content: center;
+        }
+        .header {
+            padding: 40px 60px 20px;
+            position: relative;
+            z-index: 2;
+        }
+        .title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: white;
+            position: relative;
+            display: inline-block;
+        }
+        .title::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #60a5fa;
+        }
+        .content {
+            padding: 0 60px 40px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+        }
+        .mermaid-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            width: 100%;
+            height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .components {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .component-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            width: calc(33.33% - 14px);
+            backdrop-filter: blur(5px);
+            border-left: 4px solid #60a5fa;
+            display: flex;
+            flex-direction: column;
+        }
+        .component-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: #93c5fd;
+            text-align: center;
+        }
+        .component-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .component-text {
+            font-size: 19px;
+            line-height: 1.4;
+        }
+        .chess-pieces {
+            position: absolute;
+            bottom: -100px;
+            right: -100px;
+            opacity: 0.05;
+            font-size: 500px;
+            transform: rotate(-15deg);
+            z-index: 1;
+        }
+        .bottom-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            width: 100%;
+            background: #60a5fa;
+        }
+        .mermaid {
+            background: transparent !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <h1 class="title">CẤU TRÚC CƠ BẢN CHESS ENGINE</h1>
+        </div>
+        
+        <div class="content">
+            <div class="mermaid-container">
+               <div class="mermaid">
+                    flowchart LR
+                    B[UCI] --> C[Tìm kiếm]
+                    C --> D[Sinh nước đi]
+                    C --> E[Hàm đánh giá]
+                    D --> F[Biểu diễn bàn cờ]
+                    E --> F
+                    style B fill:#dbeafe,stroke:#60a5fa,color:#1e3a8a
+                    style C fill:#dbeafe,stroke:#60a5fa,color:#1e3a8a
+                    style D fill:#dbeafe,stroke:#60a5fa,color:#1e3a8a
+                    style E fill:#dbeafe,stroke:#60a5fa,color:#1e3a8a
+                    style F fill:#dbeafe,stroke:#60a5fa,color:#1e3a8a
+                    linkStyle 4,3,1,2,0 stroke:#ff3,stroke-width:4px,color:red;
+
+                </div>
+            </div>
+            
+            <div class="components">
+                <div class="component-box">
+                    <div class="component-icon">
+                        <i class="fas fa-chess-board"></i>
+                    </div>
+                    <div class="component-title">Biểu Diễn Bàn Cờ</div>
+                    <div class="component-text">
+                        Sử dụng bitboards (64-bit) để biểu diễn vị trí quân cờ hiệu quả. Mỗi bit đại diện cho một ô trên bàn cờ, giúp tối ưu hóa các phép toán bit.
+                    </div>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="component-title">Sinh Nước Đi</div>
+                    <div class="component-text">
+                        Tạo và kiểm tra tính hợp lệ của các nước đi (movelist). Tối ưu hóa quá trình sinh nước để đẩy nhanh tốc độ tìm kiếm.
+                    </div>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="component-title">Thuật Toán Tìm Kiếm</div>
+                    <div class="component-text">
+                        Negamax với alpha-beta pruning và các kỹ thuật tối ưu. Khám phá cây tìm kiếm một cách hiệu quả, loại bỏ các nhánh không cần thiết.
+                    </div>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <div class="component-title">Hàm Đánh Giá</div>
+                    <div class="component-text">
+                        Đánh giá vị trí dựa trên các yếu tố material và vị trí. Kết hợp nhiều tiêu chí để xác định giá trị của vị trí hiện tại.
+                    </div>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-icon">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <div class="component-title">Giao Diện UCI</div>
+                    <div class="component-text">
+                        Kết nối với giao thức UCI (Universal Chess Interface) để tương tác với GUI cờ vua và các hệ thống khác.
+                    </div>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-icon">
+                        <i class="fas fa-memory"></i>
+                    </div>
+                    <div class="component-title">Transposition Table</div>
+                    <div class="component-text">
+                        Lưu trữ và tái sử dụng kết quả đã tính toán, tránh việc phân tích lại các vị trí đã gặp trước đó.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chess-pieces">
+            <i class="fas fa-chess"></i>
+        </div>
+        
+        <div class="bottom-line"></div>
+    </div>
+    
+   
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'neutral',
+                flowchart: {
+                    useMaxWidth: false,
+                    htmlLabels: true,
+                    curve: 'basis'
+                }
+            });
+        });
+        document.addEventListener('keydown', function(event) {
+          // Detect arrow key presses
+          switch(event.key) {
+              case 'ArrowLeft':
+                  // Navigate to previous slide
+                  navigateToSlide(getPreviousSlideNumber());
+                  break;
+              case 'ArrowRight':
+                  // Navigate to next slide
+                  navigateToSlide(getNextSlideNumber());
+                  break;
+          }
+      });
+
+      function getCurrentSlideNumber() {
+          // Extract slide number from current URL
+          const path = window.location.pathname;
+          const match = path.match(/(\d+)\.html$/);
+          return match ? parseInt(match[1]) : 9; // Default to current slide if no match
+      }
+
+      function getPreviousSlideNumber() {
+          const current = getCurrentSlideNumber();
+          return Math.max(1, current - 1); // Prevent going below slide 1
+      }
+
+      function getNextSlideNumber() {
+          const current = getCurrentSlideNumber();
+          // You may want to set an upper limit based on your total slides
+          return current + 1;
+      }
+
+      function navigateToSlide(slideNumber) {
+          window.location.href = `${slideNumber}.html`;
+      }
+    </script>
+</body>
+</html>

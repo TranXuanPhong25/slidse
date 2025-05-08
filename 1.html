@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dự Án Chess Engine AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .slide {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;justify-content: center;
+        }
+        .chess-pattern {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 600px;
+            height: 600px;
+            opacity: 0.1;
+            background-image: 
+                linear-gradient(45deg, #ffffff 25%, transparent 25%),
+                linear-gradient(-45deg, #ffffff 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #ffffff 75%),
+                linear-gradient(-45deg, transparent 75%, #ffffff 75%);
+            background-size: 40px 40px;
+            background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+            transform: rotate(-15deg);
+            z-index: 1;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+            padding: 60px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .title {
+            font-size: 72px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .subtitle {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 80px;
+            color: #e2e8f0;
+        }
+        .team-members {
+            margin-top: 40px;
+            font-size: 24px;
+        }
+        .member {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .member-icon {
+            margin-right: 15px;
+            color: #60a5fa;
+        }
+        .knight-icon {
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            font-size: 180px;
+            color: rgba(255, 255, 255, 0.1);
+            transform: rotate(15deg);
+        }
+        .bottom-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            width: 100%;
+            background: #60a5fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="chess-pattern"></div>
+        <div class="content">
+            <h1 class="title">DỰ ÁN CHESS ENGINE AI</h1>
+            <p class="subtitle">Xây dựng và tối ưu hóa trí tuệ nhân tạo cho cờ vua</p>
+            
+            <div class="team-members">
+                <div class="member">
+                    <i class="fas fa-user-circle member-icon"></i>
+                    <span>Trần Xuân Phong - 23021657</span>
+                </div>
+                <div class="member">
+                    <i class="fas fa-user-circle member-icon"></i>
+                    <span>Triệu Cao Tấn - 23021693</span>
+                </div>
+                <div class="member">
+                    <i class="fas fa-user-circle member-icon"></i>
+                    <span>Nguyễn Quang Minh - 23021633</span>
+                </div>
+            </div>
+        </div>
+        <i class="fas fa-chess-knight knight-icon"></i>
+        <div class="bottom-line"></div>
+    </div>   
+    <script>
+      document.addEventListener('keydown', function(event) {
+          // Detect arrow key presses
+          switch(event.key) {
+              case 'ArrowLeft':
+                  // Navigate to previous slide
+                  navigateToSlide(getPreviousSlideNumber());
+                  break;
+              case 'ArrowRight':
+                  // Navigate to next slide
+                  navigateToSlide(getNextSlideNumber());
+                  break;
+          }
+      });
+
+      function getCurrentSlideNumber() {
+          // Extract slide number from current URL
+          const path = window.location.pathname;
+          const match = path.match(/(\d+)\.html$/);
+          return match ? parseInt(match[1]) : 9; // Default to current slide if no match
+      }
+
+      function getPreviousSlideNumber() {
+          const current = getCurrentSlideNumber();
+          return (current-1)%9==0?9:current-1; // Prevent going below slide 1
+      }
+
+      function getNextSlideNumber() {
+          const current = getCurrentSlideNumber();
+          // You may want to set an upper limit based on your total slides
+          return current + 1;
+      }
+
+      function navigateToSlide(slideNumber) {
+          window.location.href = `${slideNumber}.html`;
+      }
+  </script>
+</body>
+</html>

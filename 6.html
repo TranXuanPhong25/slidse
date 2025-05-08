@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Đánh Giá Từng Quân Cờ</title>
+   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+   <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <style>
+      body {
+         font-family: 'Montserrat', sans-serif;
+         margin: 0;
+         padding: 0;
+         overflow: hidden;
+         width: 100vw;
+         height: 100vh;
+         display: flex;
+         justify-content: center;
+         align-items: center;            
+
+      }
+
+      .slide-container {
+         width: 100%;
+         height: 100%;
+         background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+         color: white;
+         position: relative;
+         overflow: hidden;
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+      }
+
+      .title-underline {
+         width: 100px;
+         height: 4px;
+         background: linear-gradient(90deg, #4299e1, #90cdf4);
+         margin: 10px 0 20px 0;
+      }
+
+      .piece-card {
+         position: relative;
+         border-radius: 10px;
+         overflow: hidden;
+         transition: all 0.3s ease;
+      }
+
+      .piece-card:hover {
+         transform: translateY(-5px);
+         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .knight-card {
+         background: linear-gradient(135deg, rgba(66, 153, 225, 0.1) 0%, rgba(66, 153, 225, 0.2) 100%);
+         border-left: 4px solid #4299e1;
+      }
+
+      .bishop-card {
+         background: linear-gradient(135deg, rgba(159, 122, 234, 0.1) 0%, rgba(159, 122, 234, 0.2) 100%);
+         border-left: 4px solid #9f7aea;
+      }
+
+      .rook-card {
+         background: linear-gradient(135deg, rgba(237, 137, 54, 0.1) 0%, rgba(237, 137, 54, 0.2) 100%);
+         border-left: 4px solid #ed8936;
+      }
+
+      .queen-card {
+         background: linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(245, 101, 101, 0.2) 100%);
+         border-left: 4px solid #f56565;
+      }
+
+      .king-card {
+         background: linear-gradient(135deg, rgba(246, 173, 85, 0.1) 0%, rgba(246, 173, 85, 0.2) 100%);
+         border-left: 4px solid #f6ad55;
+      }
+
+      .piece-icon {
+         font-size: 2.5rem;
+         margin-bottom: 0.5rem;
+      }
+
+      .knight-icon {
+         color: #4299e1;
+      }
+
+      .bishop-icon {
+         color: #9f7aea;
+      }
+
+      .rook-icon {
+         color: #ed8936;
+      }
+
+      .queen-icon {
+         color: #f56565;
+      }
+
+      .king-icon {
+         color: #f6ad55;
+      }
+
+      .feature-list li {
+         position: relative;
+         padding-left: 18px;
+         line-height: 1.4;
+      }
+
+      .feature-list li:before {
+         content: '•';
+         position: absolute;
+         left: 0;
+      }
+
+      .knight-list li:before {
+         color: #4299e1;
+      }
+
+      .bishop-list li:before {
+         color: #9f7aea;
+      }
+
+      .rook-list li:before {
+         color: #ed8936;
+      }
+
+      .queen-list li:before {
+         color: #f56565;
+      }
+
+      .king-list li:before {
+         color: #f6ad55;
+      }
+
+      .chart-container {
+         width: 100%;
+         height: 180px;
+      }
+
+   
+
+      .highlight {
+         font-weight: bold;
+      }
+
+      .knight-highlight {
+         color: #a1d5ff;
+      }
+
+      .bishop-highlight {
+         color: #ebe0ff;
+      }
+
+      .rook-highlight {
+         color: #ffc595;
+      }
+
+      .queen-highlight {
+         color: #ffb4b4;
+      }
+
+      .king-highlight {
+         color: #f6ad55;
+      }
+
+      .bg-pattern {
+         position: absolute;
+         right: 0;
+         top: 0;
+         width: 400px;
+         height: 400px;
+         opacity: 0.03;
+         z-index: 0;
+      }
+
+      .bg-chess-pattern {
+         position: absolute;
+         width: 100%;
+         height: 100%;
+         opacity: 0.03;
+         z-index: 0;
+         background-image: repeating-linear-gradient(45deg, #2d3748 25%, transparent 25%, transparent 75%, #2d3748 75%, #2d3748),
+            repeating-linear-gradient(45deg, #2d3748 25%, #1a202c 25%, #1a202c 75%, #2d3748 75%, #2d3748);
+         background-position: 0 0, 20px 20px;
+         background-size: 40px 40px;
+      }
+
+      .radar-container {
+         position: relative;
+         width: 100%;
+         height: 400px;
+      }
+   </style>
+</head>
+
+<body>
+   <div class="slide-container p-14">
+      <div class="bg-chess-pattern"></div>
+
+      <!-- Main Content -->
+      <div class="relative z-10">
+         <h1 class="text-4xl font-bold text-blue-300 mb-2">Đánh Giá Từng Quân Cờ</h1>
+         <div class="title-underline"></div>
+
+         <!-- Piece Comparison Chart -->
+         <div class="mb-6">
+            <div class="grid grid-cols-3 gap-6">
+               <div class="col-span-2 radar-container">
+                  <canvas id="pieceComparisonChart"></canvas>
+               </div>
+               
+               <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                  <h3 class="text-xl font-semibold mb-3">Điểm chính</h3>
+                  <ul class="space-y-2">
+                     <li class="flex items-start">
+                        <i class="fas fa-angle-right text-blue-400 mt-1 mr-2"></i>
+                        <span>Mỗi quân cờ có đặc tính đánh giá riêng</span>
+                     </li>
+                     <li class="flex items-start">
+                        <i class="fas fa-angle-right text-blue-400 mt-1 mr-2"></i>
+                        <span>Đánh giá khác nhau giữa midgame/endgame</span>
+                     </li>
+                     <li class="flex items-start">
+                        <i class="fas fa-angle-right text-blue-400 mt-1 mr-2"></i>
+                        <span>Giá trị thực tế phụ thuộc vào vị trí</span>
+                     </li>
+                     <li class="flex items-start">
+                        <i class="fas fa-angle-right text-blue-400 mt-1 mr-2"></i>
+                        <span>Sức mạnh quân cờ tương đối: <br>
+                           Q = 9, R = 5, B ≈ N ≈ 3, P = 1</span>
+                     </li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+
+         <!-- Piece Evaluations -->
+         <div class="grid grid-cols-5 gap-4">
+            <!-- Knight Evaluation -->
+            <div class="piece-card knight-card p-4">
+               <div class="text-center mb-3">
+                  <i class="fas fa-chess-knight piece-icon knight-icon"></i>
+                  <h3 class="text-xl font-semibold knight-highlight">Mã</h3>
+               </div>
+
+               <ul class="text-base space-y-1 feature-list knight-list mb-3">
+                  <li>Outpost (Tiền đồn): <span class="knight-highlight">+15</span></li>
+                  <li>Mobility (Di động): <span class="knight-highlight">0-8</span></li>
+                  <li>Phạt vị trí cạnh: <span class="knight-highlight">-10</span></li>
+                  <li>Tấn công vua địch: <span class="knight-highlight">+5</span></li>
+                  <li>Bảo vệ tốt: <span class="knight-highlight">+3</span></li>
+               </ul>
+
+              
+            </div>
+
+            <!-- Bishop Evaluation -->
+            <div class="piece-card bishop-card p-4">
+               <div class="text-center mb-3">
+                  <i class="fas fa-chess-bishop piece-icon bishop-icon"></i>
+                  <h3 class="text-xl font-semibold bishop-highlight">Tượng</h3>
+               </div>
+
+               <ul class="text-base space-y-1 feature-list bishop-list mb-3">
+                  <li>Cặp tượng: <span class="bishop-highlight">+30</span></li>
+                  <li>Đường chéo dài: <span class="bishop-highlight">+5</span></li>
+                  <li>Phạt nhiều tốt cùng màu: <span class="bishop-highlight">-3</span>/tốt</li>
+                  <li>Fianchetto: <span class="bishop-highlight">+10</span></li>
+                  <li>Kẹt tượng xấu: <span class="bishop-highlight">-15</span></li>
+               </ul>
+
+              
+            </div>
+
+            <!-- Rook Evaluation -->
+            <div class="piece-card rook-card p-4">
+               <div class="text-center mb-3">
+                  <i class="fas fa-chess-rook piece-icon rook-icon"></i>
+                  <h3 class="text-xl font-semibold rook-highlight">Xe</h3>
+               </div>
+
+               <ul class="text-base space-y-1 feature-list rook-list mb-3">
+                  <li>Cột mở: <span class="rook-highlight">+10</span></li>
+                  <li>Cột bán mở: <span class="rook-highlight">+5</span></li>
+                  <li>Xe ở hàng 7: <span class="rook-highlight">+20</span></li>
+                  <li>Cặp xe: <span class="rook-highlight">+20</span></li>
+                  <li>Kết nối xe: <span class="rook-highlight">+5</span></li>
+               </ul>
+
+            
+            </div>
+
+            <!-- Queen Evaluation -->
+            <div class="piece-card queen-card p-4">
+               <div class="text-center mb-3">
+                  <i class="fas fa-chess-queen piece-icon queen-icon"></i>
+                  <h3 class="text-xl font-semibold queen-highlight">Hậu</h3>
+               </div>
+
+               <ul class="text-base space-y-1 feature-list queen-list mb-3">
+                  <li>Di động cao: <span class="queen-highlight">0-27</span></li>
+                  <li>Phạt di chuyển sớm: <span class="queen-highlight">-15</span></li>
+                  <li>Tấn công vua địch: <span class="queen-highlight">+10</span></li>
+                  <li>Hậu ở hàng 7: <span class="queen-highlight">+7</span></li>
+                  <li>Cột mở: <span class="queen-highlight">+5</span></li>
+               </ul>
+
+            </div>
+
+            <!-- King Evaluation -->
+            <div class="piece-card king-card p-4">
+               <div class="text-center mb-3">
+                  <i class="fas fa-chess-king piece-icon king-icon"></i>
+                  <h3 class="text-xl font-semibold king-highlight">Vua</h3>
+               </div>
+
+               <ul class="text-base space-y-1 feature-list king-list mb-3">
+                  <li>Pawn shield: <span class="king-highlight">+5</span>/tốt</li>
+                  <li>An toàn vua (midgame): <span class="king-highlight">-0 đến -50</span></li>
+                  <li>Vua tích cực (endgame): <span class="king-highlight">+12</span></li>
+                  <li>Nhập thành: <span class="king-highlight">+20</span></li>
+                  <li>Vua lộ thiên: <span class="king-highlight">-10</span>/đường tấn công</li>
+               </ul>
+
+           
+            </div>
+         </div>
+
+         <!-- Special Evaluations -->
+         <div class="grid grid-cols-3 gap-4 mt-4">
+            <!-- Special Knight Eval -->
+            <div class="bg-white bg-opacity-20 p-3 rounded-lg">
+               <h4 class="text-sm font-semibold text-blue-300 mb-2">Đặc tính Mã</h4>
+               <div class="grid grid-cols-2 gap-2">
+                  <div class="bg-white bg-opacity-20 p-2 rounded text-base">
+                     <span class="knight-highlight font-semibold">Outpost</span>
+                     <p class="mt-1">Mã được tốt bảo vệ ở phần sân đối phương, đặc biệt tốt ở ô e5, d5, e4, d4.</p>
+                  </div>
+                  <div class="bg-white bg-opacity-20 p-2 rounded text-base">
+                     <span class="knight-highlight font-semibold">Cạnh bàn cờ</span>
+                     <p class="mt-1">Mã yếu ở cạnh bàn cờ. Càng gần trung tâm càng mạnh. Mã ở a1/h1/a8/h8 cực kỳ yếu.
+                     </p>
+                  </div>
+               </div>
+            </div>
+
+            <!-- Special Bishop/Rook Eval -->
+            <div class="bg-white bg-opacity-20 p-3 rounded-lg">
+               <h4 class="text-sm font-semibold text-purple-200 mb-2">Đặc tính Tượng/Xe</h4>
+               <div class="grid grid-cols-2 gap-2">
+                  <div class="bg-white bg-opacity-20 p-2 rounded text-base">
+                     <span class="bishop-highlight font-semibold">Cặp tượng</span>
+                     <p class="mt-1">Hai tượng mạnh hơn hai mã hoặc mã+tượng, đặc biệt khi bàn cờ rộng và ít tốt chặn.
+                     </p>
+                  </div>
+                  <div class="bg-white bg-opacity-20 p-2 rounded text-base">
+                     <span class="rook-highlight font-semibold">Xe hoạt động</span>
+                     <p class="mt-1">Xe mạnh khi điều khiển cột mở, đặc biệt khi vào được hàng 7 tấn công tốt đối
+                        phương.</p>
+                  </div>
+               </div>
+            </div>
+
+            <!-- Special King/Queen Eval -->
+            <div class="bg-white bg-opacity-20 p-3 rounded-lg">
+               <h4 class="text-sm font-semibold text-red-300 mb-2">Đặc tính Hậu/Vua</h4>
+               <div class="grid grid-cols-2 gap-2">
+                  <div class="bg-white bg-opacity-20 p-2 rounded text-base">
+                     <span class="queen-highlight font-semibold">Hậu đa năng</span>
+                     <p class="mt-1">Hậu kết hợp khả năng di chuyển của xe và tượng, mạnh nhất khi phối hợp với quân nhẹ
+                        tấn công.</p>
+                  </div>
+                  <div class="bg-white bg-opacity-20 p-2 rounded text-base">
+                     <span class="king-highlight font-semibold">Vua tích cực</span>
+                     <p class="mt-1">Vua trong endgame nên tích cực tiến về trung tâm. Vua trong midgame nên trốn an
+                        toàn.</p>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <script>
+      document.addEventListener('DOMContentLoaded', function () {
+         // Initialize the piece comparison chart
+         const ctx = document.getElementById('pieceComparisonChart').getContext('2d');
+         const pieceComparisonChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+               labels: [
+                  'Khả năng tấn công',
+                  'Tính di động',
+                  'Phòng thủ',
+                  'Kiểm soát trung tâm',
+                  'Giá trị đầu game',
+                  'Giá trị cuối game'
+               ],
+               datasets: [{
+                  label: 'Mã',
+                  data: [70, 60, 65, 80, 70, 60],
+                  backgroundColor: '   ',
+                  borderColor: 'rgba(66, 153, 225, 0.8)',
+                  pointBackgroundColor: 'rgba(66, 153, 225, 0.8)',
+               }, {
+                  label: 'Tượng',
+                  data: [75, 75, 60, 70, 75, 70],
+                  backgroundColor: 'rgba(159, 122, 234, 0.2)',
+                  borderColor: 'rgba(159, 122, 234, 0.8)',
+                  pointBackgroundColor: 'rgba(159, 122, 234, 0.8)',
+               }, {
+                  label: 'Xe',
+                  data: [85, 80, 70, 60, 70, 90],
+                  backgroundColor: 'rgba(237, 137, 54, 0.2)',
+                  borderColor: 'rgba(237, 137, 54, 0.8)',
+                  pointBackgroundColor: 'rgba(237, 137, 54, 0.8)',
+               }, {
+                  label: 'Hậu',
+                  data: [95, 95, 80, 85, 90, 85],
+                  backgroundColor: 'rgba(245, 101, 101, 0.2)',
+                  borderColor: 'rgba(245, 101, 101, 0.8)',
+                  pointBackgroundColor: 'rgba(245, 101, 101, 0.8)',
+               }, {
+                  label: 'Vua (Endgame)',
+                  data: [60, 65, 50, 70, 30, 85],
+                  backgroundColor: 'rgba(246, 173, 85, 0.2)',
+                  borderColor: 'rgba(246, 173, 85, 0.8)',
+                  pointBackgroundColor: 'rgba(246, 173, 85, 0.8)',
+               }]
+            },
+            options: {
+               responsive: true,
+               maintainAspectRatio: false,
+               scales: {
+                  r: {
+                     angleLines: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                     },
+                     grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                     },
+                     pointLabels: {
+                        color: '#a0aec0',
+                        font: {
+                           size: 18
+                        }
+                     },
+                     ticks: {
+                        display: false,
+                        backdropColor: 'transparent'
+                     }
+                  }
+               },
+               plugins: {
+                  legend: {
+                     position: 'top',
+                     labels: {
+                        color: '#e2e8f0',
+                        font: {
+                           size: 16
+                        },
+                        padding: 20
+                     }
+                  }
+               }
+            }
+         });
+      });
+      document.addEventListener('keydown', function (event) {
+         // Detect arrow key presses
+         switch (event.key) {
+            case 'ArrowLeft':
+               // Navigate to previous slide
+               navigateToSlide(getPreviousSlideNumber());
+               break;
+            case 'ArrowRight':
+               // Navigate to next slide
+               navigateToSlide(getNextSlideNumber());
+               break;
+         }
+      });
+
+      function getCurrentSlideNumber() {
+         // Extract slide number from current URL
+         const path = window.location.pathname;
+         const match = path.match(/(\d+)\.html$/);
+         return match ? parseInt(match[1]) : 9; // Default to current slide if no match
+      }
+
+      function getPreviousSlideNumber() {
+         const current = getCurrentSlideNumber();
+         return Math.max(1, current - 1); // Prevent going below slide 1
+      }
+
+      function getNextSlideNumber() {
+         const current = getCurrentSlideNumber();
+         // You may want to set an upper limit based on your total slides
+         return current + 1;
+      }
+
+      function navigateToSlide(slideNumber) {
+         window.location.href = `${slideNumber}.html`;
+      }
+   </script>
+</body>
+
+</html>
